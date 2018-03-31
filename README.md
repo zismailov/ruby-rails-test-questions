@@ -134,7 +134,7 @@ I tried to answer the most frequent questions in interviews, it does not mean th
   <br/><br/>
 
 - **How do you use flexible quotes to not have to worry about the above? i.e. this is a great way to create a string**
-  >There are times we need to be able to define a wrapping character that is NOT in the string, and using % allows us to do that. This is a powerful, and very usable, way of avoiding "l[leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome)".
+  >There are times we need to be able to define a wrapping character that is NOT in the string, and using % allows us to do that. This is a powerful, and very usable, way of avoiding "[leaning toothpick syndrome](https://en.wikipedia.org/wiki/Leaning_toothpick_syndrome)".
 
     ```ruby
       %(this is the string)
@@ -190,4 +190,493 @@ I tried to answer the most frequent questions in interviews, it does not mean th
   ```
   >yes it will leave the original strings in place
 
+  <br/><br/>
+
+- **Demonstrate how to concatenate to the end of a string**
+  ```ruby
+    my_str = "Marco "
+    my_str += "Polo"
+
+    #but there is a better way to do it : the << method.
+
+    my_str = "Marco "
+    my_str << "Polo"
+  ```
+  <br/><br/>
+
+- **What is the shovel(<<) operator and what does it do for strings?**
+  ```ruby
+  my_str = "Marco "
+  my_str << "Polo"
+  => "Marco Polo"
+  ```
+  <br/><br/>
+
+- **What is the difference between += and << ?**
+  ```ruby
+    a = 'foo'
+    a.object_id #=> 2154889340
+    a << 'bar'
+    a.object_id #=> 2154889340
+    a += 'quux'
+    a.object_id #=> 2154742560
+
+    my_str = "Marco "
+    my_str << "Polo"
+  ```
+  >So << alters the original string rather than creating a new one. The reason for this is that in ruby a += b is syntactic shorthand for a = a + b (the same goes for the other <op>= operators) which is an assignment. On the other hand << is an alias of concat() which alters the receiver in-place.
+
+  ```ruby
+  #!/usr/bin/env ruby
+
+  require 'benchmark'
+
+  Benchmark.bmbm do |x|
+    x.report('+= :') do
+      s = ""
+      10000.times { s += "something " }
+    end
+    x.report('<< :') do
+      s = ""
+      10000.times { s << "something " }
+    end
+  end
+  ```
+  <br/><br/>
+
+- **What is the output? "\n".size What is "\t"?**
+  ```ruby
+  "\n".size
+  => 1
+  ```
+  ```
+  \t - is a symbol for tab
+  ```
+  <br/><br/>
+
+
+- **Can you escape characters in a ' ' single quote?**
+  ```ruby
+  "Yaho o".gsub(" ", "\\\'")
+  "Yaho'o".gsub("'", "\\\'")
+  ```
+  <br/><br/>
+
+- **How do you interpolate into a string?**
+  >Use double quotes and #{ }
+
+  ```ruby
+  "Text #{var}"
+  ```
+  <br/><br/>
+
+- **Show two ways to get the 4th - 6th letters out of "One is less than two"**
+  ```ruby
+  text = "One is less than two"
+  text[3,3]
+  text[3..5]
+  ```
+  <br/><br/>
+
+- **How would you split this string? "One two three" what do you get back when split?**
+  ```ruby
+  text = "One two three"
+  text.split
+  => ["One", "two", "three"] #it returns an array split with no args will split on blank spaces
+  ```
+  <br/><br/>
+
+- **Show how you would split with a reg expression**
+  ```ruby
+  text = "One two three"
+  text.split(/:/) #the : is the matching reg expression
+  => ["One two three"]
+  ```
+  <br/><br/>
+
+- **Use split and join on strings/array. Is join valid on strings? What does join do to an array? what does it do to a string?**
+  ```ruby
+  text = "One two three"
+  text2 = text.split(/:/)
+  => ["One two three"]
+
+  text2.join(" ")
+  => "One two three"
+  ```
+  >text2.join(" ") - that will build a string with `" "` between each element, it will call `to_s` on each element and create a string with whatever you pass into `join` inserted between each element, returns a string.
+
+  <br/><br/>
+
+- **a = "one" b = "one", does a == b?, does a.object_id == b.object_id? What does == usually evaluated for**
+  ```ruby
+  a = "one"
+  b = "one"
+  a == b
+  => true
+
+  a.object_id == b.object_id
+  => false
+  ```
+  >a == b but they are different objects, `==` defined for strings this way in the class definition obviously
+
+  <br/><br/>
+
+- **Is nil an object?**
+  >Yes `nil` is an object
+
+  <br/><br/>
+
+- **nil.nil? returns?**
+  >`true`
+
+ <br/><br/>
+
+- **nil.to_s returns?**
+  >`=> ""`
+
+  <br/><br/>
+
+- **nil.inspect returns?**
+  > `=> "nil"`
+
+  <br/><br/>
+
+- **describe the is_a? method**
+  >`kind_of?` and `is_a?` are synonymous.
+  
+  >`instance_of?` is different from the other two in that it only returns true if the object is an instance of that exact class, not a subclass.
+
+  >`is_a?` will verify class of the object. e.g. `:text.is_a?(Symbol)` returns true, it checks the superclasses too and modules,a mixed in module will make `is_a?` evaluate to true
+
+  >Example: `"hello".is_a? Object` and `"hello".kind_of? Object` return true because "hello" is a `String` and `String` is a subclass of `Object`. However `"hello".instance_of? Object` returns false.
+
+  <br/><br/>
+
+- **one = :symbol1 and two = :symbol1, are one and two the same object?**
+  >Yes. both one and two have the same object_id
+
+  ```ruby
+  one = :symbol1.object_id
+  => 1166748
+
+  two = :symbol1.object_id
+  => 1166748
+  ```
+  <br/><br/>
+
+- **Discuss method names and their relationship to symbols**
+  >all method names will become symbols.
+
+  ```ruby
+  #That's the way [Method#name](http://www.ruby-doc.org/core-2.0/Method.html#method-i-name) works, it returns the name of the method as a symbol:
+  m = "foo".method(:size)  #=> #<Method: String#size>
+  m.name                   #=> :size
+  m.call                   #=> 3
+  ```
+  <br/><br/>
+
+- **Discuss Constants and their relationship to symbols**
+  >All Constants will become symbols `RubyConstant = "Hello there"`
+
+  <br/><br/>
+
+- is :symb == :"symb"? or :name == :"name"
+  >yes, Ruby turns the quote into a symbol
+
+  ```ruby
+  :name == :"name"
+  => true
+
+  :name
+  => :name
+  :"name"
+  => :name
+  ```
+  <br/><br/>
+
+- **Ruby Symbols can never be garbage collected?**
+  >If you are using Ruby 2.2.0 or later, it should usually be OK to dynamically create a lot of symbols, because they will be garbage collected according to the Ruby 2.2.0, which has a link to more details about the new symbol GC.
+
+  <br/><br/>
+
+- **How can you make a string into a symbol?**
+  >`"String".to_sym`
+
+  <br/><br/>
+
+- **Build a symbol that has spaces in it.**
+  >`x = :"this has spaces"`
+
+  <br/><br/>
+
+- **Build a symbol with interpolation**
+  >`x = :"This has #{interpolation} in it"`
+
+  <br/><br/>
+
+- **What happens when you pass in a symbol to interpolated string?**
+  >The symbol is converted to a string
+
+  <br/><br/>
+
+- **What is the class of a Regular Expression?**
+  >`Regexp`
+
+  <br/><br/>
+
+- **Show two ways how you can match a string against a reg expression**
+  ```ruby
+  "this is string"[/is/] #or if a variable x[/is/]
+  ```
+  ```ruby
+  x =~ /aaba/  # [/ /] - this returns a string NOT MATCHDATA, to get matchdata use .match
+  ```
+  <br/><br/>
+
+- **What is returned when you get a match? no match?**
+  >The matching string is returned, no match nil is returned
+  >The position(integer) of the match is returned
+
+  <br/><br/>
+
+- **What do the following do in Regexp?**
+  >`?` letter before it is optional `/ab?/` will return `ab` or `a`, `b` is fine but optional
+
+  >`+` must match a least one, then unlimited `/ab+/` matches `ab` or `abbb`, but not `a`, must be `a b`
+
+  >`*` matches zero or more. `/ab*/` matches `a`, `ab`, `abbbb`, `/b*/` matches `b`, `bbb` and `""` (the match must be at beginning, is this an "anchor typish"? thingy in the Regexp you are doing?)
+
+  >`|` or
+
+  >`[]` this will match any character in there. `/[cbr]at`/ matches `cat`, `bat`, `rat`, not `zat` . the `[]` is within a `[]` that starts the regexp, this is a character class
+
+  >`\d` (say "backslash d") will match any digit
+
+  >`\s` (say "backslash s") will match any whitespace
+
+  >`\w` (say "backslash w") is a word character defined by `[/[a-zA-Z0-9_]+/]` ( use `\w+` to get words, just `w` is JUST a word character)
+
+  >`.` any character at all except a `\n` newline
+
+  >`\A` (backslash capital A) matches beginning of a string
+
+  >`\Z` (backslash capital Z) vs `\z`, matches end of a string but wont include newline, `\z` includes the newline
+
+  >`^` matches the start of a line (anchor) e.g. `/^\d/` finds a number if it starts a line good for matching after `\n`, note this and the one below also match when the start of a string (or end as below) a newline does not need to be embedded
+
+  >`$` matches the end of a line (anchor) e.g. `/\d$/` finds a number if it ends a line good for matching after `\n`
+
+  <br/><br/>
+
+- **What is greedy matching?**
+  >The Regexp will match as much as it can, repetition operators are greedy
+
+  <br/><br/>
+
+- **If more than one match what gets returned?**
+  >The first match encountered will be returned
+
+  <br/><br/>
+
+- **What is this called /? ... what is this called \?**
+  >That is a `/` slash, forward slash and a `\` backslash
+
+  <br/><br/>
+
+- **Demonstrate a range match in Regexp**
+  ```ruby
+  "this is a number 46"[/[0-9]+/]
+  ```
+  >[0-9] is a range in Regexp
+
+  <br/><br/>
+
+- **Give an example of negating a character class**
+  ```ruby
+    "new match22 78"[/[^0-9]+/]
+  ```
+  <br/><br/>
+
+- **How do you get the negative of the character classes?**
+  >Capitalize it .. e.g. `\W`
+
+  <br/><br/>
+
+- **How would you return a group of results in an array?**
+  >([a-f].+) as an example this will return all the matches
+
+  <br/><br/>
+
+- **How can you take a string and return an array with all the words in it?**
+  ```ruby
+  "one two-three".scan(/\w+/)
+  ```
+  >`scan` will take a regualr expression as an parameter and return an array with all matches
+
+  <br/><br/>
+
+- **What does sub method do on a string?**
+  ```ruby
+  str.sub(pattern, replacement) #-> new_str
+  "hello".sub(/[etdsr]/, '@') #-> "h@llo"
+  ```
+  >Find and replace, pass in two parameters find, replace_with
+
+  <br/><br/>
+
+- **gsub?**
+  ```ruby
+  "hello".gsub(/[aeiou]/, '@') #-> "h@ll@"
+  ```
+  >find and replace all pass in two parameters find, replace_with g-(global)sub
+
+  <br/><br/>
+
+- **Talk about global methods**
+  >Global methods exist in the program outside of a class definition. `()` are optional for params list
+  sometimes lack of parenthesis leads to ambiguity. Having wrong number of
+  arguments is not a syntax error. It is a runtime error
+  global methods e.g. puts are defined on `Kernal`.
+  `Kernal` is mixed into all objects and kernal
+
+<br/><br/>
+
+- **What kind of Runtime Error is called when you call a method with wrong number of arguments?**
+  >`ArgumentError`
+
+  <br/><br/>
+
+- **Demonstrate how to define a method with default argument values**
+  ```RUBY
+  def method(a, b = "default")
+  ```
+  <br/><br/>
+
+- **Demonstrate how to define a method that takes a variable amount of arguments**
+  ```ruby
+  def method(*args)
+  ```
+  >if the `*` sponge operator is in the middle values are assigned left to right then right to left, the `*` sponges up the others
+
+  <br/><br/>
+
+- **If nothing is passed into a method with a variable arg, what is the value of that arg in the method?**
+  >`[]`
+
+  <br/><br/>
+
+- **How to you specify a return value in a method? what if you do not specify a return value?**
+  >`return :returnvalue`, if you do not specify the last statement executed is returned, once a return is encountered the method passes back control
+
+  <br/><br/>
+
+- **Show two ways to call a method defined in the same class as the method you are in now.**
+  ```ruby
+  x = method_defined_in_class(3,4)
+  x = self.method_defined_in_class(3,4)
+  ```
+  >the `self` is implied
+
+  <br/><br/>
+
+- **Define a private method in a class**
+  ```ruby
+  private :private_method
+
+  def private_method(a,b)
+    a+b
+  end
+  ```
+  <br/><br/>
+
+- **Talk about if you can call a private method from within another method of that class. How can you not call it?**
+  >You can call the private method within the class, but it will not work if you use `self.private_method`
+  You will get a NoMethodError
+
+  <br/><br/>
+
+- **How do you declare a top level constant? How can you reference it?**
+  >STORE_ADDRESS = "The moon" you can reference it with STORE_ADDRESS or ::STORE_ADDRESS
+
+  <br/><br/>
+
+- **What about declaring constants in a class and referencing them?**
+  >Declare it the same way. You can reference it with ClassName::STORE_ADDRESS or even ::ClassName::STORE_ADDRESS
+
+  <br/><br/>
+
+- **Do Nested classes inherit constant values?**
+  >yes
+
+  <br/><br/>
+
+- **Do subclasses inherit constants from parent classes?**
+  >yes
+
+  <br/><br/>
+
+- **If in nested class and constant declared in both the parent class and in the inherited class which would win?**
+  >If you have a nested class that inherits from another class and is also nested in a class the lexical scope would win (nested would take from parent (outside the nest), not from the < inherited)
+  the definition of the variable would be searched first locally then searched through the inheritance hierarchy
+
+  <br/><br/>
+
+- **Describe static(lexical) scoping and dynamic scoping.**
+  >These examples show how ruby does lexical static scoping. static scoping variables are bound locally... dynamically scoped variables will pop on and off the stack based on environment
+  Ruby searches for Constants in this order
+
+  >1 The enclosing scope
+
+  >2 Any outer scopes (repeat until top level is reached)
+
+  >3 Included modules
+
+  >4 Superclass(es)
+
+  >5 Object
+
+  >6 Kernel
+
+  <br/><br/>
+
+- **What kind of statements return a value in Ruby?**
+  >Every statement will return a value in Ruby
+
+  <br/><br/>
+
+- **Write an if then else in Ruby**
+  ```ruby
+  if condition == true
+    :returnval
+  else
+    :otherval
+  end
+  ```
+  <br/><br/>
+
+- **Write an if then else in ruby that assigns a value to a variable. What if the result of a if then statement does not assign a value? What is returned?**
+  ```ruby
+  value = if condition == 1
+            :returnvalue
+          elsif condition == 2
+            :othervalue
+          else
+            :finalthing
+          end
+  ```
+  >You can say this, assign a value because, every statement in Ruby returns a value
+  If you do this and nothing matches, nil is returned.
+
+  <br/><br/>
+
+- **Assign a value with a condition operator**
+  ```ruby
+    value = (x == 4 ? "true_value" : "false_value")
+   ```
+   <br/><br/>
+
+- **Assign a value with a statement modifier**
+  ```ruby
+  value = 5 if x == 7
+  ```
   <br/><br/>
