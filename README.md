@@ -343,7 +343,7 @@ I tried to answer the most frequent questions in interviews, it does not mean th
 
 - **describe the is_a? method**
   >`kind_of?` and `is_a?` are synonymous.
-  
+
   >`instance_of?` is different from the other two in that it only returns true if the object is an instance of that exact class, not a subclass.
 
   >`is_a?` will verify class of the object. e.g. `:text.is_a?(Symbol)` returns true, it checks the superclasses too and modules,a mixed in module will make `is_a?` evaluate to true
@@ -680,3 +680,240 @@ I tried to answer the most frequent questions in interviews, it does not mean th
   value = 5 if x == 7
   ```
   <br/><br/>
+
+
+- **Write an unless statement**
+  ```ruby
+  unless x == 5
+    puts "here"
+  end
+  ```
+  <br/><br/>
+
+- **Write a while statement**
+  ```ruby
+  i = 0
+  while i < 5
+     puts i
+     # Increment.
+     i += 1
+  end
+  ```
+  <br/><br/>
+
+- **Write a break statement in a loop, does it stop the whole loop?**
+  ```ruby
+  i = 0
+  while i < 5
+    puts i
+    i += 1
+    break if i == 2
+  end
+  ```
+  <br/><br/>
+
+- **Write a next statement**
+  ```ruby
+  i = 0
+  loop do
+    i += 2
+    if i == 4
+      next  # skip rest of the code in this iteration
+    end
+    puts i
+    if i == 10
+      break
+    end
+  end
+  ```
+  <br/><br/>
+
+- **Write a for statement**
+  ```ruby
+  for i in 0..5
+    puts "Value of local variable is #{i}"
+  end
+  ```
+  <br/><br/>
+
+- **What are the things that evaluate to false when put into a conditional statement?**
+  ```ruby
+  false
+  ```
+  ```ruby
+  nil
+  ```
+  >`0` does not evaluate to false
+
+  <br/><br/>
+
+- **What does the Class method ancestors do when called?**
+  >returns an array of all the classes and modules that a given class inherits from
+
+  <br/><br/>
+
+- **Talk about the exception class tree.**
+  >`Object` is at top. Exception inherits from `Object`, then `StandardError`, `RuntimeError`
+
+  <br/><br/>
+
+- **Write a rescue clause. Does a rescue have to be in a begin / end clause?**
+  ```ruby
+  begin
+  # something which might raise an exception
+  rescue StandardError => ex
+  # code that deals with some exception
+  rescue SomeOtherException => some_other_variable
+  # code that deals with some other exception
+  else
+  # code that runs only if *no* exception was raised
+  ensure
+  # ensure that this code always runs, no matter what
+  # does not change the final value of the block
+  end
+  ```
+  <br/><br/>
+
+- **What does method fail?**
+  >same as `raise`. I guess it causes an `RuntimeError` to be raised always or if in a rescue clause will raise the same exception
+
+  <br/><br/>
+
+- **If an error is a RuntimeError is it also a StandardError?**
+  >Yes `StandardError` is higher up the inheritance hierarchy so if it is a `RuntimeError` of course it is also a StandardError
+
+  <br/><br/>
+
+- **What is a synonym for fail?**
+  >In Ruby, `fail` is synonymous with `raise`
+
+  >Use `fail` instead of `raise` to signal exceptions
+
+  >Use `raise` instead of `fail` to rethrow exceptions.'
+
+  ```ruby
+  # example
+  def sample
+    fail 'something wrong' unless success?
+  rescue => e
+    logger.error e
+    raise
+  end
+```
+  <br/><br/>
+
+- **How could you define and raise your own exception you defined?**
+  ```ruby
+  #Well you could have class
+  class MyError < StandardError
+    def initialize(msg="My default message")
+      super
+    end
+  end
+
+  #Then you could
+  raise MyError, "My message"
+  ```
+  <br/><br/>
+
+- **What does map do on an array? what is a synonym for it?**
+  >`map` transforms each element of the array according to what is returned by block. Synonym is `collect`
+  or better said, `map` transforms a list by applying a function to each of its elements. map! does this in place
+
+  <br/><br/>
+
+- **98. What can you do to find all the matching elements in an array, how do you implement?**
+  >When you call a`rray.select { |item| (item % 2) == 0 }`, will iterate over the array, passing into the block each item, it will return the items that match the condition in there
+
+  ```ruby
+  arr = [ 4, 8, 15, 16, 23, 42 ]
+  result = arr.select { |element| element > 20 }
+  puts result   # prints out [23, 42]
+  ```
+  <br/><br/>
+
+- **What is another name for this above method?**
+  >find_all
+
+  <br/><br/>
+
+- **What method will get the first match in an array?**
+  >`find` will find the first element that matches a criteria an `array.find { |item| item.size > 4 }`
+
+  <br/><br/>
+
+- **What does inject do? What "traditionally returns an array and what traditionally just returns a number?"**
+  >`Inject` takes an initial value as an argument and passes that into the first param of block, second param in block is the collection being passed in to be iterated over
+  This is basically an accumulator `enum.inject(initial) {| memo, obj | block } => obj`
+  The 'memo' is first set by 'initial' from then on out the memo is whatever is returned by the block. this will iterate over each item that is part of the enum, you can use the memo as part of calculations as you go through the list of stuff, you can only call inject on an enum object like an array or a range.
+  `map` and `collect` will change each value in the array and return an array, inject just returns last thing evaluated.. unless of course you are returning an array or something on purpose
+
+  <br/><br/>
+
+- **Is a range a collection that can be used with methods like map?**
+  >Sure you can do this `x = (1..3).map { [item] item + 1}` this will add 1 to each element of the array, return that array
+
+  <br/><br/>
+
+- **What does this do? File.open("example_file.txt") do |file|**
+  >That will open a file and pass each line of the file into a block
+
+  <br/><br/>
+
+- **Demonstrate how to pass a block into a method, describe what is going on**
+  ```ruby
+  class Array
+    def each 
+      index = 0 
+      while index < self.length # "self" means the current object in this case the current array.
+        yield self[index] # the current element is passed to the block
+        index += 1  # then the next item is moved
+      end
+    end
+  end
+
+  ["a", "b", "c"].each { |param| puts param }
+  ```
+  <br/><br/>
+
+- **Can you call yield multiple times on a block?**
+  >Yes, you can call yield tons and it will keep executing the block you have passed in
+
+  <br/><br/>
+
+- **How can you check if a method was called with a block?**
+  >if block_given?
+
+  <br/><br/>
+
+- **Show how you can assign a block to a variable, can you pass in two lambdas to a method and never use a &?**
+  ```ruby
+  code_block = lambda do |argument|
+    x = 4
+    puts argument
+  end
+
+  code_block.call("called")
+  ```
+  >yes, you do NOT need & just define 2 lambdas and then pass them in, the & is to designate the yield
+
+  <br/><br/>
+
+- **Show another way to call a code block other than, add_one.call(10)**
+  >another way to write e.g. `code_block_name.call(10)` is `code_block_name[10]`
+
+  <br/><br/>
+
+- **How would you pass in a code block (lambda) to a method expecting a code block?**
+  <br/><br/>
+
+- **How would you define a method that explicitly takes a code block? what if your explicitly define a code block and don't pass in a block?**
+  ```ruby
+  def method_with_block(&block)
+    block.call(10)
+  end
+  ```
+  >you do not have to pass in a block just because it explicitly takes one
+
+  <br/><br/>
+  
