@@ -799,7 +799,7 @@ I tried to answer the most frequent questions in interviews, it does not mean th
     logger.error e
     raise
   end
-```
+  ```
   <br/><br/>
 
 - **How could you define and raise your own exception you defined?**
@@ -916,4 +916,3 @@ I tried to answer the most frequent questions in interviews, it does not mean th
   >you do not have to pass in a block just because it explicitly takes one
 
   <br/><br/>
-  
